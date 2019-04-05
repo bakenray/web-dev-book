@@ -4,9 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title></title>
+    <title>调取摄像头</title>
 </head>
+<style>
+main{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    height:100vh;
+    align-items: center;
+} 
+#capture{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.button{
+    border:1px solid #ccc;
+    padding:6px 150px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+}
+.button:hover{
+    box-shadow: 0 4px 10px rgba(0,0,0,.1)
+}
+</style>
 <body>
-    
+<main>
+    <video id="video" width="320" height="213.33" autoplay style="width:320px;height:213.33px;border:1px solid #ccc;"></video>    
+    <div id="capture">
+        <span class="button">拍照</span>
+    </div>  
+    <canvas id="canvas" width="320" height="213.33" style="width:320px;height:213.33px;border:1px solid #ccc;"></canvas>
+</main>
+
+<script>
+// 旧设备兼容方法
+function getUserMeida(constraints,success,error){
+    if(navigator.mediaDevices.getUserMedia){
+        // 最新的标准API
+        navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error)
+    }
+    else if(navigator.webkitGetUserMedia){
+        // webkit浏览器
+        navigator.webkitGetUserMedia(constraints,success,error)
+    }
+    else if(navigator.mozGetUserMedia){
+        // 火狐浏览器
+        navigator.mozGetUserMedia(constraints,success,error)
+    }
+    else if(navigator.getUserMedia){
+        // 旧版API
+        navigator.getUserMedia(constraints,success,error)
+    }
+}
+
+var video = document.getElementById('video')
+var canvas = document.getElementById('canvas')
+var context = canvas.getContext('2d')
+
+// 成功回调函数
+function success(stream){
+    // 兼容webkit核心浏览器
+    var CompatibleURL = window.URL || window.webkitURL
+    // 将视频流设置为video元素的源
+    video.src = CompatibleURL.createObjectURL(stream)
+    video.play()
+}
+
+// 异常的回调函数
+function error(error){
+    console.log('访问用户媒体设备失败：',error.name,error.message)
+}
+
+if(navigator.mediaDevices.getUserMedia || navigator.getUserMedia ||
+   navigator.webkitGetUserMedia || navigator.mozGetUserMedia){
+    //    调用用户媒体设备，访问摄像头
+    getUserMeida({video:{width:320,height:213.33}},success,error)
+}
+else{
+    alert('您的浏览器不支持访问用户媒体设备！')
+}
+
+// 绑定拍照按钮的单击事件
+document.getElementById('capture').addEventListener('click',function(){
+    // 将video画面在canvas上岗绘制
+    context.drawImage(video,0,0,320,213.33)
+})
+
+
+</script>
 </body>
 </html>
