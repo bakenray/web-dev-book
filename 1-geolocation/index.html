@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hanss">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Geolocation 获取当前地理位置</title>
+    <style>
+        .geolocastion{
+            width:100vw;
+            height:100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="geolocation"></div>
+
+    <script>
+        function success(position){
+            console.log('获取位置成功:',position)
+            alert(position.coords)
+
+        }
+        function error(positionError){
+            console.log('获取位置失败：',positionError.code,positionError.message)
+            alert(positionError.code)
+        }
+        var option ={
+            enableHightAccuracy:false,
+            timeout:0,
+            maximumAge:0
+        }
+        navigator.geolocation.getCurrentPosition(success,error,option)
+        if(navigator.geolocation){
+        // 获取地理位置
+            navigator.geolocation.getCurrentPosition(success,error,option)
+        }
+        else{
+            alert('您的浏览器不支持Geolocations')
+        }
+    </script>
+</body>
+</html>
